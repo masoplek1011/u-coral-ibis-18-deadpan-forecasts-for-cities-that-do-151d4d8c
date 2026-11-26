@@ -25,4 +25,12 @@ if (content.length < 1) {
   throw new Error("forecast is empty");
 }
 
-fs.writeFileSync(path.join(outDir, "entry.txt"), content, "utf8");
+const outPath = path.join(outDir, "entry.txt");
+fs.writeFileSync(outPath, content, "utf8");
+
+// Read-back verification: confirm the bytes on disk are exactly the
+// intended content, catching partial writes or disk errors.
+const written = fs.readFileSync(outPath, "utf8");
+if (written !== content) {
+  throw new Error("entry.txt read-back mismatch: written bytes differ from intended content");
+}
